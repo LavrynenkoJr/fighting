@@ -15,12 +15,22 @@ public class Arena extends Thread {
     @Override
     public void run() {
 
-        if (fighter1!=null && fighter2!=null){
-            System.out.println("FIGHT");
-            whoFirst();
-        }
 
-        System.out.println("END");
+        synchronized (this) {
+            if (fighter1 != null && fighter2 != null) {
+                System.out.println("FIGHT");
+                whoFirst();
+            } else{
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+        //run();
+
        /* else {
             try {
                 sleep(1000);
@@ -34,6 +44,7 @@ public class Arena extends Thread {
     }
 
     public synchronized boolean joinFighter(Fighter fighter){
+
         if (fighter1==null){
             fighter1 = fighter;
             System.out.println("зашел боец с ид = " + fighter.getId());
@@ -85,22 +96,32 @@ public class Arena extends Thread {
         }else {
             dead(whoDamage);
         }
-
-
-
     }
 
     public void dead(Fighter fighter){
         System.out.println("fighter dead = " + fighter.getId());
         if (fighter1==fighter) {
+            Main.fighterList.remove(fighter1);
             fighter1 = null;
             fighter2.refreshHealth();
+            Main.fighterList.remove(fighter2);
+            Main.fighterList.add(fighter2);
         }
         else {
             fighter2 = null;
+            Main.fighterList.remove(fighter2);
+            Main.fighterList.remove(fighter1);
+            Main.fighterList.add(fighter1);
             fighter1.refreshHealth();
         }
         notify();
     }
 
+    public boolean isFight(){
+        if (fighter1==null || fighter2==null){
+            return false;
+        }
+        else
+            return true;
+    }
 }

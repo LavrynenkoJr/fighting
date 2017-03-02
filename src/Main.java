@@ -1,18 +1,35 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class Main {
 
-    public static void main(String[]args) {
+    public static List<Fighter> fighterList;
+    private static Arena arena;
+
+    static int whoNext = 0;
+
+    public static Object locker = new Object();
+
+    public static void main(String[]args) throws InterruptedException {
 
         Random random = new Random();
-        Arena arena = new Arena();
+        arena = new Arena();
         arena.start();
 
         Fighter fighter;
+        fighterList = new LinkedList<Fighter>();
 
-        for (int i = 1; i < 11;  i++){
+        for (int i = 1; i < 11; i++){
+            fighter = new Fighter(i, arena);
+            fighterList.add(fighter);
+        }
+
+        startFighter();
+
+
+      /*  for (int i = 1; i < 11;  i++){
             fighter = new Fighter(i, arena);
             fighter.start();
         }
@@ -21,8 +38,7 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("arena live? " + arena.isAlive());
-
+*/
         /*Fighter fighter1 = new Fighter(1, arena);
         Fighter fighter2 = new Fighter(2, arena);
         Fighter fighter3 = new Fighter(3, arena);
@@ -43,11 +59,48 @@ public class Main {
        /* Arena arena = new Arena();
         arena.start();*/
 
-        List<Fighter> fighters = new ArrayList<Fighter>();
-
-
-
-
-
     }
+
+    public static void startFighter() throws InterruptedException {
+
+       synchronized (arena) {
+           while (fighterList.size() > 1 && whoNext < fighterList.size()) {
+
+               fighterList.get(whoNext).start();
+               whoNext++;
+               startFighter();
+                arena.wait();
+           }
+       }
+
+
+
+
+        /*int whoNext = 0;
+
+        fighterList.get(whoNext).start();
+        synchronized (arena) {
+            if (arena.isFight()) {
+                arena.wait();
+            }else {
+                startFighter();
+            }
+        }
+*/
+
+       /* synchronized (arena){
+            //while (fighterList.size()>1){
+
+                //fighterList.get(whoNext).start();
+                whoNext++;
+                arena.wait();
+                startFighter();
+
+            //}
+        }
+
+        startFighter();
+*/
+    }
+
 }
