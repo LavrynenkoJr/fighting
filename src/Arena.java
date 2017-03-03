@@ -10,7 +10,8 @@ public class Arena extends Thread {
     Fighter fighter1;
     Fighter fighter2;
 
-
+    Fighter win;
+    Fighter los;
 
     @Override
     public void run() {
@@ -101,17 +102,20 @@ public class Arena extends Thread {
     public void dead(Fighter fighter){
         System.out.println("fighter dead = " + fighter.getId());
         if (fighter1==fighter) {
-            Main.fighterList.remove(fighter1);
+            //Main.fightResult(fighter2, fighter1);
+
+            win = fighter2;
+            los = fighter1;
+
             fighter1 = null;
             fighter2.refreshHealth();
-            Main.fighterList.remove(fighter2);
-            Main.fighterList.add(fighter2);
         }
         else {
+            //Main.fightResult(fighter1, fighter2);
+            win = fighter1;
+            los = fighter2;
+
             fighter2 = null;
-            Main.fighterList.remove(fighter2);
-            Main.fighterList.remove(fighter1);
-            Main.fighterList.add(fighter1);
             fighter1.refreshHealth();
         }
         notify();

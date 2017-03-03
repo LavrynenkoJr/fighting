@@ -5,20 +5,15 @@ import java.util.Random;
 
 public class Main {
 
-    public static List<Fighter> fighterList;
+    private static LinkedList<Fighter> fighterList;
     private static Arena arena;
-
-    static int whoNext = 0;
-
-    public static Object locker = new Object();
+    private static Fighter fighter;
 
     public static void main(String[]args) throws InterruptedException {
 
-        Random random = new Random();
         arena = new Arena();
         arena.start();
 
-        Fighter fighter;
         fighterList = new LinkedList<Fighter>();
 
         for (int i = 1; i < 11; i++){
@@ -26,81 +21,35 @@ public class Main {
             fighterList.add(fighter);
         }
 
-        startFighter();
+        fighterList.get(0).start();
+        fighterList.get(1).start();
 
-
-      /*  for (int i = 1; i < 11;  i++){
-            fighter = new Fighter(i, arena);
-            fighter.start();
-        }
-        try {
-            arena.join(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-*/
-        /*Fighter fighter1 = new Fighter(1, arena);
-        Fighter fighter2 = new Fighter(2, arena);
-        Fighter fighter3 = new Fighter(3, arena);
-        Fighter fighter4 = new Fighter(4, arena);
-        Fighter fighter5 = new Fighter(5, arena);
-        Fighter fighter6 = new Fighter(6, arena);
-        fighter1.start();
-        fighter2.start();
-        fighter3.start();
-        fighter4.start();
-        fighter5.start();
-        fighter6.start();*/
-
-        /*Fighter fighter3 = new Fighter();
-        Fighter fighter4 = new Fighter();
-        Fighter fighter5 = new Fighter();*/
-
-       /* Arena arena = new Arena();
-        arena.start();*/
+        resultFight();
 
     }
 
-    public static void startFighter() throws InterruptedException {
-
-       synchronized (arena) {
-           while (fighterList.size() > 1 && whoNext < fighterList.size()) {
-
-               fighterList.get(whoNext).start();
-               whoNext++;
-               startFighter();
-                arena.wait();
-           }
-       }
-
-
-
-
-        /*int whoNext = 0;
-
-        fighterList.get(whoNext).start();
+    public static void resultFight(){
         synchronized (arena) {
-            if (arena.isFight()) {
+            try {
                 arena.wait();
-            }else {
-                startFighter();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+
+            fighterList.remove(arena.los);
+            if (fighterList.getLast() != arena.win) {
+                fighterList.remove(arena.win);
+                fighterList.add(arena.win);
+            }
+
+            if (fighterList.size()>1) {
+                fighterList.getFirst().start();
+                resultFight();
+            }
+            else
+                System.out.println("\t\t\t\t\t\t\t\t\t\t\t\t\tFINISH WINNER = " +
+                        fighterList.getLast().toString() +
+                        " WINS = " + fighterList.getFirst().getCountWins() );
         }
-*/
-
-       /* synchronized (arena){
-            //while (fighterList.size()>1){
-
-                //fighterList.get(whoNext).start();
-                whoNext++;
-                arena.wait();
-                startFighter();
-
-            //}
-        }
-
-        startFighter();
-*/
     }
-
 }

@@ -58,9 +58,18 @@ public class Fighter extends Thread {
         double dex = dexterity*koef;
         double intu = intuition*koef;
 
-        strength = new BigDecimal(str).setScale(0, RoundingMode.HALF_UP).intValue();
-        dexterity = new BigDecimal(dex).setScale(0, RoundingMode.HALF_UP).intValue();
-        intuition = new BigDecimal(intu).setScale(0, RoundingMode.HALF_UP).intValue();
+        strength = (int) Math.round(str);
+        dexterity = (int) Math.round(dex);
+        intuition = (int) Math.round(intu);
+
+        if (strength+dexterity+intuition > 50){
+            System.out.println("shit");
+            strength = (int) Math.floor(str);
+            if (strength+dexterity+intuition > 50){
+                System.out.println("shit");
+                dexterity = (int) Math.floor(dex);
+            }
+        }
 
         System.out.println("fighter id = " + id + " strength = " + strength + " dexter = " + dexterity + " intui = " + intuition);
 
@@ -104,5 +113,14 @@ public class Fighter extends Thread {
     @Override
     public long getId() {
         return id;
+    }
+
+    public int getCountWins() {
+        return countWins;
+    }
+
+    @Override
+    public String toString() {
+        return "Fighter id = " + id + " strength = " + strength + " dexterity = " + dexterity + " intuition = " + intuition;
     }
 }
