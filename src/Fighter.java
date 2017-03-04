@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class Fighter extends Thread {
+public class Fighter {
 
     private int id;
     private int strength;
@@ -9,19 +9,15 @@ public class Fighter extends Thread {
     private int health = 100;
     private int countWins;
 
+    private double str, dex, intu;
+
     private Random random = new Random();
 
 
     public Fighter(int id){
         this.id = id;
-        //initParams();
-    }
-
-    @Override
-    public void run() {
         initParams();
     }
-
 
     public void initParams(){
 
@@ -32,23 +28,44 @@ public class Fighter extends Thread {
         double sum = strength + dexterity + intuition;
         double koef = (50/sum);
 
-        double str = strength*koef;
-        double dex = dexterity*koef;
-        double intu = intuition*koef;
+        str = strength*koef;
+        dex = dexterity*koef;
+        intu = intuition*koef;
 
         strength = (int) Math.round(str);
         dexterity = (int) Math.round(dex);
         intuition = (int) Math.round(intu);
 
+        checkForZero();
+
         if ((strength+dexterity+intuition) > 50){
-            strength = (int) Math.floor(str);
-            if ((strength+dexterity+intuition) > 50){
-                dexterity = (int) Math.floor(dex);
-            }
+           floorBiggest();
+        }
+        if ((strength+dexterity+intuition) > 50){
+            floorBiggest();
         }
 
         System.out.println(toString());
+    }
 
+    public void checkForZero(){
+        if (strength==0){
+            strength = 1;
+        }else if (dexterity == 0){
+            dexterity = 1;
+        }else if (intuition == 0){
+            intuition = 1;
+        }
+    }
+
+    public void floorBiggest(){
+        if (strength > dexterity && strength > intuition){
+            strength = (int) Math.floor(str);
+        }else if (dexterity > intuition && dexterity > strength){
+            dexterity = (int) Math.floor(dex);
+        }else {
+            intuition = (int) Math.floor(intu);
+        }
     }
 
     public int hit(){
@@ -83,8 +100,7 @@ public class Fighter extends Thread {
             return false;
     }
 
-    @Override
-    public long getId() {
+    public int getId() {
         return id;
     }
 
