@@ -1,17 +1,17 @@
 import java.util.Random;
 
-/**
- * Created by java-1-04 on 01.03.2017.
- */
 public class Arena extends Thread {
 
-    Random random = new Random();
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
 
-    Fighter fighter1;
-    Fighter fighter2;
+    private Random random = new Random();
 
-    Fighter win;
-    Fighter los;
+    private Fighter fighter1;
+    private Fighter fighter2;
+
+    private Fighter winner;
+    private Fighter loser;
 
     public Arena(Fighter fighter1, Fighter fighter2){
         this.fighter1 = fighter1;
@@ -21,12 +21,12 @@ public class Arena extends Thread {
     @Override
     public void run() {
 
-        System.out.println("FIGHT");
-        whoFirst();
-
+        System.out.println("\t\t\tFIGHT");
+        System.out.println("\tFighter " + fighter1.getId() + " vs " + "Fighter " + fighter2.getId());
+        startFighting();
     }
 
-    public void whoFirst(){
+    public void startFighting(){
 
         if (random.nextBoolean())
             fighting(fighter1, fighter2);
@@ -37,7 +37,7 @@ public class Arena extends Thread {
     public synchronized void fighting(Fighter fighter1, Fighter fighter2){
 
         if (fighter2.bias()){
-            System.out.println("увернулся " + fighter2.getId());
+            System.out.println("fighter " + fighter2.getId() + " - увернулся");
             fighting(fighter2, fighter1);
         }else {
             hitting(fighter1, fighter2);
@@ -54,25 +54,27 @@ public class Arena extends Thread {
     }
 
     public void dead(Fighter deadFighter){
-        System.out.println("fighter dead = " + deadFighter.getId());
+        System.out.println(ANSI_RED + "fighter dead = " + deadFighter.getId() + ANSI_RESET);
         if (fighter1 == deadFighter) {
-            win = fighter2;
-            los = fighter1;
+            winner = fighter2;
+            loser = fighter1;
 
             fighter2.refreshHealth();
         }
         else {
-            win = fighter1;
-            los = fighter2;
+            winner = fighter1;
+            loser = fighter2;
 
             fighter1.refreshHealth();
         }
         notify();
     }
 
-    public void setFighter(Fighter fighter1, Fighter fighter2){
-        this.fighter1 = fighter1;
-        this.fighter2 = fighter2;
-        run();
+    public Fighter getWinner() {
+        return winner;
+    }
+
+    public Fighter getLoser() {
+        return loser;
     }
 }

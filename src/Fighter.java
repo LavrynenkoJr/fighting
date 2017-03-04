@@ -13,7 +13,6 @@ public class Fighter {
 
     private Random random = new Random();
 
-
     public Fighter(int id){
         this.id = id;
         initParams();
