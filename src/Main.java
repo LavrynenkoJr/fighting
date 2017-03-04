@@ -15,8 +15,8 @@ public class Main {
             fighterList.add(fighter);
         }
 
-        fighterList.get(0).start();
-        fighterList.get(1).start();
+        //fighterList.get(0).start();
+        //fighterList.get(1).start();
         arena = new Arena(fighterList.get(0), fighterList.get(1));
         arena.start();
 
@@ -35,7 +35,7 @@ public class Main {
             }
 
             if (fighterList.size() > 1) {
-                fighterList.getFirst().start();
+                //fighterList.getFirst().start();
 
                 arena = new Arena(fighterList.getLast(), fighterList.getFirst());
                 arena.start();
