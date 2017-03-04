@@ -1,49 +1,27 @@
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Random;
 
 public class Fighter extends Thread {
 
-    private Random random = new Random();
-    private final Arena arena;
-
-    private int countWins;
-
+    private int id;
     private int strength;
     private int dexterity;
     private int intuition;
     private int health = 100;
+    private int countWins;
 
-    private int id;
+    private Random random = new Random();
 
-    public Fighter(int id, Arena arena){
+
+    public Fighter(int id){
         this.id = id;
-        this.arena = arena;
+        //initParams();
     }
 
     @Override
     public void run() {
         initParams();
-        joinToArena();
     }
 
-    public void joinToArena(){
-        synchronized (arena){
-            if (!arena.joinFighter(this)) {
-                try {
-                    arena.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                joinToArena();
-            }
-        }
-    }
-
-    public void refreshHealth(){
-        this.health = 100;
-        countWins++;
-    }
 
     public void initParams(){
 
@@ -62,16 +40,14 @@ public class Fighter extends Thread {
         dexterity = (int) Math.round(dex);
         intuition = (int) Math.round(intu);
 
-        if (strength+dexterity+intuition > 50){
-            System.out.println("shit");
+        if ((strength+dexterity+intuition) > 50){
             strength = (int) Math.floor(str);
-            if (strength+dexterity+intuition > 50){
-                System.out.println("shit");
+            if ((strength+dexterity+intuition) > 50){
                 dexterity = (int) Math.floor(dex);
             }
         }
 
-        System.out.println("fighter id = " + id + " strength = " + strength + " dexter = " + dexterity + " intui = " + intuition);
+        System.out.println(toString());
 
     }
 
@@ -90,11 +66,9 @@ public class Fighter extends Thread {
             return false;
     }
 
-    public int getStrength() {
-        if (strength<0){
-            strength = 0;
-        }
-        return strength;
+    public void refreshHealth(){
+        this.health = 100;
+        countWins++;
     }
 
     public boolean damage(int hit){
@@ -105,9 +79,8 @@ public class Fighter extends Thread {
 
         if (health > 0)
             return true;
-        else if (health <= 0){
+        else
             return false;
-        }else return false;
     }
 
     @Override

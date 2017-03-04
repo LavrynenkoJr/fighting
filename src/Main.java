@@ -1,7 +1,4 @@
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 
 public class Main {
 
@@ -11,30 +8,25 @@ public class Main {
 
     public static void main(String[]args) throws InterruptedException {
 
-        arena = new Arena();
-        arena.start();
-
         fighterList = new LinkedList<Fighter>();
 
-        for (int i = 1; i < 11; i++){
-            fighter = new Fighter(i, arena);
+        for (int i = 1; i < 101; i++){
+            fighter = new Fighter(i);
             fighterList.add(fighter);
         }
 
         fighterList.get(0).start();
         fighterList.get(1).start();
+        arena = new Arena(fighterList.get(0), fighterList.get(1));
+        arena.start();
 
         resultFight();
-
     }
 
-    public static void resultFight(){
+    public static void resultFight() throws InterruptedException {
         synchronized (arena) {
-            try {
-                arena.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
+            arena.wait();
 
             fighterList.remove(arena.los);
             if (fighterList.getLast() != arena.win) {
@@ -42,14 +34,18 @@ public class Main {
                 fighterList.add(arena.win);
             }
 
-            if (fighterList.size()>1) {
+            if (fighterList.size() > 1) {
                 fighterList.getFirst().start();
+
+                arena = new Arena(fighterList.getLast(), fighterList.getFirst());
+                arena.start();
                 resultFight();
             }
-            else
-                System.out.println("\t\t\t\t\t\t\t\t\t\t\t\t\tFINISH WINNER = " +
+            else {
+                System.out.println("\t\t\t\t\t\t\t\t\t\t\t\t\tWINNER : " +
                         fighterList.getLast().toString() +
-                        " WINS = " + fighterList.getFirst().getCountWins() );
+                        " WINS = " + fighterList.getFirst().getCountWins());
+            }
         }
     }
 }
